@@ -1,12 +1,7 @@
 ﻿using CsvHelper;
 using TelepathyRooms.ViewModel;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TelepathyRooms.Services.BookingServices;
 using TelepathyRooms.Helper;
 

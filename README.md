@@ -20,10 +20,10 @@ Menus
 
 Binary Tree (Console App)
 
-NOTE: Symbols are strict here such as minus operator (negative based from PDF expression) and Minus symbol are different.
+NOTE: 
+1. Symbols are strict here such as minus operator (negative based from PDF expression) and Minus symbol are different.
 You may refer to the Constant Operators in the Binary Tree Project.
-Letters: x X will be converted to Operator Multiplyer
-
-1. It requires an expression input to generate a Postfix, Binary Tree in json format and the calculated value
-2. Console App will allow you to input expression continously until exited.
+2. Letters: x X will be converted to Operator Multiplyer
+3. It requires an expression input to generate a Postfix, Binary Tree in json format and the calculated value
+4. Console App will allow you to input expression continously until exited.
 

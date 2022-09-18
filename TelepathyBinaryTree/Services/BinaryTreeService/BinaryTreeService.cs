@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using TelepathyBinaryTree.ViewModel;
 
 namespace TelepathyBinaryTree.Services.BinaryTreeService
@@ -13,6 +12,8 @@ namespace TelepathyBinaryTree.Services.BinaryTreeService
 
         public int CalculateBinaryTree(List<string> postFix)
         {
+            if(postFix == null || postFix.Count == 0) return 0;
+
             var tree = BuildTree(postFix);
             var total = EvaluateBinaryTree(tree);
             return total;
@@ -20,42 +21,19 @@ namespace TelepathyBinaryTree.Services.BinaryTreeService
 
         public List<string> ConvertToPostfix(string infix)
         {
-            //Assuming that the infix has a proper negative symbol to represent negative
+            if (String.IsNullOrEmpty(infix)) return null;
 
-            string postfix = "";
             List<string> postFixList = new List<string>();
-            bool isNegative = false;
 
-            infix = Regex.Replace(infix, @"\s+", "");
+            infix = Regex.Replace(infix, @"\s+", ""); // remove empty spaces
+            infix = Regex.Replace(infix, "[xX]", Operators.MathSymbolMultiply); // replace character x X to Multiplier x symbol
             Stack<string> operatorStack = new Stack<string>();
-
-            //Make sure to convert all negative number with a proper negative symbol
-            //for (int x = 0; x < infix.Length; x++)
-            //{
-            //    string text = infix[x].ToString();
-
-            //    if (text != Operators.Minus)
-            //    {
-            //        continue;
-            //    }
-            //    if (x == 0 || infix[x - 1] == '(' || isOperation(infix[x - 1].ToString()))
-            //    {
-            //        infix[x] = '~';
-            //        infix[x] = 
-            //    }
-            //}
 
             for (int i = 0; i < infix.Length; i++)
             {
                 string character = infix[i].ToString();
                 if (IsOperation(character))
                 {
-                    //if(character == Operators.Negative)
-                    //{
-                    //    isNegative = true;
-                    //    continue;
-                    //}
-                    // Handle Multiple digit
                     if (character == Operators.OpenBracket)
                     {
                         operatorStack.Push(character);
@@ -67,7 +45,6 @@ namespace TelepathyBinaryTree.Services.BinaryTreeService
                     {
                         while (operatorStack.Count > 0 && operatorStack.Peek() != Operators.OpenBracket && GetPriority(operatorStack.Peek()) >= priority)
                         {
-                            //postfix += operatorStack.Pop() + " ";
                             postFixList.Add(operatorStack.Pop());
                         }
                         operatorStack.Push(character);
@@ -79,7 +56,6 @@ namespace TelepathyBinaryTree.Services.BinaryTreeService
                     {
                         while (operatorStack.Count > 0 && operatorStack.Peek() != Operators.OpenBracket)
                         {
-                            //postfix += operatorStack.Pop() + " ";
                             postFixList.Add(operatorStack.Pop());
                         }
                         if (operatorStack.Count > 0 && operatorStack.Peek() == Operators.OpenBracket)
@@ -89,14 +65,6 @@ namespace TelepathyBinaryTree.Services.BinaryTreeService
                     }
                     else
                     {
-                        //if(isNegative)
-                        //{
-                        //    postfix = $"{Operators.Negative} + {character} ";
-                        //    isNegative = false;
-                        //}
-                        //else
-                        //{
-                        //postfix += character + " ";
                         if (i != 0 && IsDigit(infix[i - 1]))
                         {
                             postFixList[postFixList.Count - 1] = postFixList[postFixList.Count - 1] + character;
@@ -105,77 +73,114 @@ namespace TelepathyBinaryTree.Services.BinaryTreeService
                         {
                             postFixList.Add(character);
                         }
-                        //}
                     }
                 }
             }
 
             while (operatorStack.Count > 0)
             {
-                //if (operatorStack.Count != 1)
-                //{
-                //    postfix += operatorStack.Pop() + " ";
-                //}
-                //else
-                //    postfix += operatorStack.Pop();
                 postFixList.Add(operatorStack.Pop());
             }
             return postFixList;
-            //return postFixList;
         }
 
-        private Node BuildTree(List<string> postFix)
+        public Node BuildTree(List<string> postFix)
         {
+            if (postFix == null || postFix.Count == 0) return null;
+
             Stack<Node> stackNode = new Stack<Node>();
-
-            for (int i = 0; i < postFix.Count; i++)
+            try
             {
-                var dataValue = postFix[i].ToString();
-
-                Node node = new Node(dataValue);
-                if (!IsOperation(dataValue))
+                for (int i = 0; i < postFix.Count; i++)
                 {
-                    stackNode.Push(node);
+                    var dataValue = postFix[i].ToString();
+
+                    Node node = new Node(dataValue);
+                    if (!IsOperation(dataValue))
+                    {
+                        //if negative is detected, then i will create right node '-' and right node Number
+                        if (dataValue.Length > 1 && dataValue[0].ToString() == Operators.Negative)
+                        {
+                            var tempNode = new Node(dataValue[0].ToString());
+                            node.data = dataValue.Remove(0, 1);
+                            stackNode.Push(node);
+                            stackNode.Push(tempNode); // Pushing the negative value
+                        }
+                        else
+                        {
+                            stackNode.Push(node);
+                        }
+                    }
+                    else
+                    {
+                        node.rightHand = stackNode.Pop();
+                        if (node.rightHand.data == Operators.Negative)
+                        {
+                            node.rightHand.rightHand = stackNode.Pop();
+                        }
+
+                        node.leftHand = stackNode.Pop();
+                        if (node.leftHand.data == Operators.Negative)
+                        {
+                            node.leftHand.rightHand = stackNode.Pop();
+                        }
+
+                        stackNode.Push(node);
+                    }
+                }
+
+                return stackNode.Pop();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                throw ex;
+            }
+            
+        }
+
+        private int EvaluateBinaryTree(Node node)
+        {
+            try
+            {
+                if (node == null)
+                {
+                    return 0;
+                }
+                int leftEval;
+                int rightEval;
+
+                if (IsOperation(node.data))
+                {
+                    leftEval = EvaluateBinaryTree(node.leftHand);
+                    rightEval = EvaluateBinaryTree(node.rightHand);
+
+                    if (node.data.Equals(Operators.Plus))
+                        return leftEval + rightEval;
+
+                    if (node.data.Equals(Operators.MathSymbolMinus))
+                        return leftEval - rightEval;
+
+                    if (node.data.Equals(Operators.Multiply) || node.data.Equals(Operators.MathSymbolMultiply))
+                        return leftEval * rightEval;
+
+                    return leftEval / rightEval;
+                }
+                if(node.data == Operators.Negative) // If negative, i will return negative value. ASSUMING THAT negative only follows by number
+                {
+                    rightEval = EvaluateBinaryTree(node.rightHand);
+
+                    return -rightEval;
                 }
                 else
                 {
-                    node.rightHand = stackNode.Pop();
-                    node.leftHand = stackNode.Pop();
-
-                    stackNode.Push(node);
+                    return Convert.ToInt32(node.data);
                 }
             }
-
-            return stackNode.Pop();
-        }
-        private int EvaluateBinaryTree(Node node)
-        {
-            if (node == null)
+            catch(Exception ex)
             {
-                return 0;
-            }
-            int leftEval;
-            int rightEval;
-
-            if (IsOperation(node.data))
-            {
-                leftEval = EvaluateBinaryTree(node.leftHand);
-                rightEval = EvaluateBinaryTree(node.rightHand);
-
-                if (node.data.Equals(Operators.Plus))
-                    return leftEval + rightEval;
-
-                if (node.data.Equals(Operators.MathSymbolMinus))
-                    return leftEval - rightEval;
-
-                if (node.data.Equals(Operators.Multiply) || node.data.Equals(Operators.MathSymbolMultiply))
-                    return leftEval * rightEval;
-
-                return leftEval / rightEval;
-            }
-            else
-            {
-                return Convert.ToInt32(node.data);
+                Console.WriteLine(ex);
+                throw ex;
             }
         }
 

@@ -51,6 +51,8 @@ namespace TelepathyRooms.Services.BookingServices
 
         public List<HotelRoom> GetAllAvailableRooms(List<HotelRoom> hotelRooms)
         {
+            if (hotelRooms == null || hotelRooms.Count == 0) return null;
+
             List<HotelRoom> availableRooms = new List<HotelRoom>();
 
             availableRooms = hotelRooms.Where(hotels => hotels.Status == RoomStatus.Available).ToList();

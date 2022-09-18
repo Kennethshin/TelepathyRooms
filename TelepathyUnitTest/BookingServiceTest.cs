@@ -15,6 +15,19 @@ namespace TelepathyUnitTest
         }
 
         [TestMethod]
+        public void GetAscendingSequence_NullRoom_IsNull()
+        {
+            //Arrange
+            List<HotelRoom> mockList = null;
+
+            //Act
+            var result = _bookingService.GetRoomPath(mockList);
+
+            //Assert
+            Assert.IsNull(result);
+        }
+
+        [TestMethod]
         public void GetAscendingSequence_RoomPath_Success()
         {
             //Arrange
@@ -48,7 +61,20 @@ namespace TelepathyUnitTest
         }
 
         [TestMethod]
-        public void Get_AvailableHotelRooms_Success()
+        public void GetAllAvailableRooms_NullRooms_IsNull()
+        {
+            //Arrange
+            List<HotelRoom> mockList = null;
+
+            //Act
+            var result = _bookingService.GetAllAvailableRooms(mockList);
+
+            //Assert
+            Assert.IsNull(result);
+        }
+
+        [TestMethod]
+        public void GetAllAvailableRooms_AvailableHotelRooms_Success()
         {
             //Arrange
             var mockList = new List<HotelRoom>()
@@ -73,6 +99,19 @@ namespace TelepathyUnitTest
 
             //Assert
             Assert.IsTrue(equal);
+        }
+
+        [TestMethod]
+        public void Assign_NullRooms_EmptyString()
+        {
+            //Arrange
+            List<HotelRoom> mockList = null;
+
+            //Act
+            var result = _bookingService.AssignRoom(mockList);
+
+            //Assert
+            Assert.AreEqual(String.Empty,result);
         }
 
         [TestMethod]
@@ -170,6 +209,19 @@ namespace TelepathyUnitTest
         }
 
         [TestMethod]
+        public void CheckOutRoom_NullRoom_Unsuccessful()
+        {
+            //Arrange
+            List<HotelRoom> mockList = null;
+
+            //Act
+            var result = _bookingService.CheckOutRoom(mockList, "2A");
+
+            //Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
         public void CheckOutRoom_HasOccupiedRoom_Successful()
         {
             //Arrange
@@ -263,6 +315,18 @@ namespace TelepathyUnitTest
             Assert.AreNotEqual(expected, result);
         }
 
+        [TestMethod]
+        public void CleanRoom_NullRoom_Unsucessful()
+        {
+            //Arrange
+            List<HotelRoom> mockList = null;
+
+            //Act
+            var result = _bookingService.CleanRoom(mockList, "1C");
+
+            //Assert
+            Assert.IsFalse(result);
+        }
 
         [TestMethod]
         public void CleanRoom_HasVacantRoom_Successful()
@@ -359,6 +423,19 @@ namespace TelepathyUnitTest
         }
 
         [TestMethod]
+        public void OutOfServiceRoom_NullRoom_Unsuccessful()
+        {
+            //Arrange
+            List<HotelRoom> mockList = null;
+
+            //Act
+            var result = _bookingService.OutOfServiceRoom(mockList, "1C");
+
+            //Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
         public void OutOfServiceRoom_HasVacantRoom_Successful()
         {
             //Arrange
@@ -450,6 +527,19 @@ namespace TelepathyUnitTest
 
             //Assert
             Assert.AreNotEqual(expected, result);
+        }
+
+        [TestMethod]
+        public void RepairedRoom_NullRoom_Unsuccessful()
+        {
+            //Arrange
+            List<HotelRoom> mockList = null;
+
+            //Act
+            var result = _bookingService.RepairedRoom(mockList, "1B");
+
+            //Assert
+            Assert.IsFalse(result);
         }
 
         [TestMethod]

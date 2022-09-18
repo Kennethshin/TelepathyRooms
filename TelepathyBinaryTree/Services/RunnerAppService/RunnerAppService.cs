@@ -54,6 +54,7 @@ namespace TelepathyBinaryTree.Services.BinaryTreeService
 
         private void DrawTree(List<string> postfixList)
         {
+            Console.WriteLine("***Binary Tree Structure***");
             var tree = _binaryTreeService.BuildTree(postfixList);
             var json = JsonConvert.SerializeObject(tree, Formatting.Indented);
             Console.WriteLine(json);

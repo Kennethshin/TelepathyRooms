@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\TelepathyBinaryTree\TelepathyBinaryTree.csproj" />
     <ProjectReference Include="..\TelepathyRooms\TelepathyRooms.csproj" />
   </ItemGroup>
 

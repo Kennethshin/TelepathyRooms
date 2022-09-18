@@ -40,7 +40,7 @@ namespace TelepathyUnitTest
 
             //Act
             var result = _bookingService.GetRoomPath(mockList);
-            var orderedResult = result.OrderBy(x => x.OrderNumber).Select(x => x.RoomNumber).ToList();
+            var orderedResult = result?.OrderBy(x => x.OrderNumber).Select(x => x.RoomNumber).ToList();
             bool equal = orderedResult.SequenceEqual(expected.OrderBy(x => x.OrderNumber).Select(x => x.RoomNumber).ToList());
             
             //Assert

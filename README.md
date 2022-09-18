@@ -14,3 +14,6 @@ Menus
 
 
 Binary Tree
+NOTE: Symbols are stricted here such as minus operator (negative based from PDF expression) and Minus symbol are differen.
+You may refer to the Constant Operators.
+
